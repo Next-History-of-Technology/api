@@ -17,7 +17,8 @@ void loop() {
 
   float ppm = ((float)(valorSensor));
 
-  Serial.println(ppm);
+  Serial.print(ppm);
+  Serial.println(';');
   
 
 
