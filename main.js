@@ -63,8 +63,20 @@ const serial = async (
 
             // este insert irá inserir os dados na tabela "medida"
             await poolBancoDados.execute(
+<<<<<<< HEAD
                 'INSERT INTO leitura (valorPPM , fkSensor) VALUES (?, 1)',
                 [sensorPpm]
+=======
+                'INSERT INTO Leitura (valorPPM , fkSensor) VALUES (?, ?)',
+                [sensorPpm , 1]
+                
+            );
+
+               await poolBancoDados.execute(
+                'INSERT INTO Leitura (valorPPM , fkSensor) VALUES (?, ?)',
+                [sensorPpm-15 , 2]
+                
+>>>>>>> 2d80650778c882ce6d4eab3f9c32c8575df0ab75
             );
             await poolBancoDados.execute(
                 'INSERT INTO leitura (valorPPM , fkSensor) VALUES (?, 2)',
