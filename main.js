@@ -10,11 +10,12 @@ const SERVIDOR_PORTA = 3300;   /* a porta que o servidor vai rodar */
 // habilita ou desabilita a inserção de dados no banco de dados
 const HABILITAR_OPERACAO_INSERIR = true;
 
-// função para comunicação serial
+// função para comunicação serial 
 const serial = async (
     valoresSensorAnalogico,
     //valoresSensorDigital,
 ) => {
+
 
     // conexão com o banco de dados MySQL
     let poolBancoDados = mysql.createPool(
@@ -26,6 +27,8 @@ const serial = async (
             port: 3307
         }
     ).promise();
+
+    // BLOCO 2
 
     // lista as portas seriais disponíveis e procura pelo Arduino
     const portas = await serialport.SerialPort.list();  /* aqui ele ta criando uma lista de todas as portas USB */
@@ -42,10 +45,10 @@ const serial = async (
         }
     );
 
-    // primeira para fim
+    
 
 
-    //COMEÇO DA PARTE 2
+    //COMEÇO DA PARTE 3
 
     // evento quando a porta serial é aberta
     arduino.on('open', () => {
@@ -53,7 +56,7 @@ const serial = async (
     });
 
 
-    // PARTE 3 INICIO
+    // PARTE 4 INICIO
 
     // processa os dados recebidos do Arduino
     arduino.pipe(new serialport.ReadlineParser({ delimiter: '\r\n' })).on('data', async (data) => {
@@ -70,7 +73,7 @@ const serial = async (
         // insere os dados no banco de dados (se habilitado)
         if (HABILITAR_OPERACAO_INSERIR) {
             
-            //Parte 4 – Inserindo no banco de dados
+            //Parte 5 – Inserindo no banco de dados
 
             // este insert irá inserir os dados na tabela "medida"
             await poolBancoDados.execute(
@@ -102,17 +105,19 @@ const serial = async (
 }
 
 
-// PARTE 5
+// PARTE 6
 
 
-// função para criar e configurar o servidor web
+// Aqui o código está criando um servidor web usando o Express, uma biblioteca do Node.js.
+// Esse “servidor” é o que permite que outros sistemas (como o site) acessem os dados coletados pelo Arduino.
+
 const servidor = (
     valoresSensorAnalogico,
     //valoresSensorDigital
 ) => {
     const app = express();
 
-    // configurações de requisição e resposta
+    // Essa parte é uma configuração de segurança e acesso.
     app.use((request, response, next) => {
         response.header('Access-Control-Allow-Origin', '*');
         response.header('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
@@ -150,5 +155,5 @@ const servidor = (
     servidor(
         valoresSensorAnalogico,
         //valoresSensorDigital
-    );
+    );  
 })();
