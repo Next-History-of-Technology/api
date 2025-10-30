@@ -107,7 +107,6 @@ const serial = async (
 
 // PARTE 6
 
-
 // Aqui o código está criando um servidor web usando o Express, uma biblioteca do Node.js.
 // Esse “servidor” é o que permite que outros sistemas (como o site) acessem os dados coletados pelo Arduino.
 
