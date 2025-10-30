@@ -1,11 +1,11 @@
 // importa os bibliotecas necessários
-const serialport = require('serialport');
-const express = require('express');
-const mysql = require('mysql2');
+const serialport = require('serialport');  /* comunicação com o Arduino via cabo USB. */
+const express = require('express');  /* cria a API (servidor web).*/
+const mysql = require('mysql2');       /* conecta e insere dados no banco MySQL   */
 
 // constantes para configurações
-const SERIAL_BAUD_RATE = 9600;
-const SERVIDOR_PORTA = 3300;
+const SERIAL_BAUD_RATE = 9600;   /* velocidade de comunicação entre o arduino e o NodeJS. 9600 bit por segundo*/
+const SERVIDOR_PORTA = 3300;   /* a porta que o servidor vai rodar */
 
 // habilita ou desabilita a inserção de dados no banco de dados
 const HABILITAR_OPERACAO_INSERIR = true;
@@ -28,8 +28,8 @@ const serial = async (
     ).promise();
 
     // lista as portas seriais disponíveis e procura pelo Arduino
-    const portas = await serialport.SerialPort.list();
-    const portaArduino = portas.find((porta) => porta.vendorId == 2341 && porta.productId == 43);
+    const portas = await serialport.SerialPort.list();  /* aqui ele ta criando uma lista de todas as portas USB */
+    const portaArduino = portas.find((porta) => porta.vendorId == 2341 && porta.productId == 43);  /* 2341 e 43 são os identificadores do fabricante e o modelo do arduino*/
     if (!portaArduino) {
         throw new Error('O arduino não foi encontrado em nenhuma porta serial');
     }
@@ -42,10 +42,18 @@ const serial = async (
         }
     );
 
+    // primeira para fim
+
+
+    //COMEÇO DA PARTE 2
+
     // evento quando a porta serial é aberta
     arduino.on('open', () => {
         console.log(`A leitura do arduino foi iniciada na porta ${portaArduino.path} utilizando Baud Rate de ${SERIAL_BAUD_RATE}`);
     });
+
+
+    // PARTE 3 INICIO
 
     // processa os dados recebidos do Arduino
     arduino.pipe(new serialport.ReadlineParser({ delimiter: '\r\n' })).on('data', async (data) => {
@@ -58,8 +66,11 @@ const serial = async (
         valoresSensorAnalogico.push(sensorPpm);
         //valoresSensorDigital.push(sensorDigital);
 
+
         // insere os dados no banco de dados (se habilitado)
         if (HABILITAR_OPERACAO_INSERIR) {
+            
+            //Parte 4 – Inserindo no banco de dados
 
             // este insert irá inserir os dados na tabela "medida"
             await poolBancoDados.execute(
@@ -74,7 +85,6 @@ const serial = async (
                 
             );
             console.log("valores inseridos no banco: ", sensorPpm );
-
         }
 
     });
@@ -84,6 +94,10 @@ const serial = async (
         console.error(`Erro no arduino (Mensagem: ${mensagem}`)
     });
 }
+
+
+// PARTE 5
+
 
 // função para criar e configurar o servidor web
 const servidor = (

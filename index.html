@@ -3,12 +3,15 @@
 
 <head>
     <title>Graphics</title>
+
+    <!-- Importa a biblioteca Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
     <h1>Graphics</h1>
+
     <div style="display: flex;">
         <div style="width: 50%;">
             <canvas id="sensorAnalogico"></canvas>
@@ -19,6 +22,9 @@
     </div>
 
     <script>
+
+        //gráfico sensor analógico
+
         var sensorAnalogico = new Chart(document.getElementById('sensorAnalogico').getContext('2d'), {
             type: 'line',
             data: {
@@ -69,8 +75,9 @@
             }
         });
 
-        var paginacao = {};
-        var tempo = {};
+
+        var paginacao = {};  // Servem pra controlar quantos dados já foram lidos
+        var tempo = {}; // marcar o tempo em que cada leitura aconteceu
 
         function obterDados(grafico, endpoint) {
             fetch('http://localhost:3300/sensores/' + endpoint)
@@ -101,6 +108,8 @@
                 .catch(error => console.error('Erro ao obter dados:', error));
         }
 
+
+        // A cada 1 segundo atualiza os dados
         setInterval(() => {
             obterDados(sensorAnalogico, 'analogico');
             obterDados(sensorDigital, 'digital');
