@@ -10,6 +10,18 @@ const SERVIDOR_PORTA = 3300;   /* a porta que o servidor vai rodar */
 // habilita ou desabilita a inserção de dados no banco de dados
 const HABILITAR_OPERACAO_INSERIR = true;
 
+var sensor5
+var sensor6
+var sensor7
+var sensor8
+
+setInterval(() => {
+    sensor5 = Math.floor(Math.random() * 4);
+    sensor6 = Math.floor(Math.random() * 4);
+    sensor7 = Math.floor(Math.random() * 4);
+    sensor8 = Math.floor(Math.random() * 4) + 5;
+}, 1000);
+
 // função para comunicação serial 
 const serial = async (
     valoresSensorAnalogico,
@@ -20,7 +32,7 @@ const serial = async (
     // conexão com o banco de dados MySQL
     let poolBancoDados = mysql.createPool(
         {
-            host: 'localhost',
+            host: '10.18.32.124',
             user: 'aluno',
             password: 'Sptech#2024',
             database: 'nh3',
@@ -45,7 +57,7 @@ const serial = async (
         }
     );
 
-    
+
 
 
     //COMEÇO DA PARTE 3
@@ -69,11 +81,11 @@ const serial = async (
         valoresSensorAnalogico.push(sensorPpm);
         //valoresSensorDigital.push(sensorDigital);
 
-
         // insere os dados no banco de dados (se habilitado)
         if (HABILITAR_OPERACAO_INSERIR) {
-            
+
             //Parte 5 – Inserindo no banco de dados
+
 
             // este insert irá inserir os dados na tabela "medida"
             await poolBancoDados.execute(
@@ -92,7 +104,24 @@ const serial = async (
                 'INSERT INTO leitura (valorPPM , fkSensor) VALUES (?, 4)',
                 [sensorPpm - 15]
             );
-            console.log("valores inseridos no banco: ", sensorPpm);
+
+            await poolBancoDados.execute(
+                'INSERT INTO leitura (valorPPM , fkSensor) VALUES (?, 5)',
+                [sensor5]
+            );
+            await poolBancoDados.execute(
+                'INSERT INTO leitura (valorPPM , fkSensor) VALUES (?, 6)',
+                [sensor6]
+            );
+            await poolBancoDados.execute(
+                'INSERT INTO leitura (valorPPM , fkSensor) VALUES (?, 7)',
+                [sensor7]
+            );
+            await poolBancoDados.execute(
+                'INSERT INTO leitura (valorPPM , fkSensor) VALUES (?, 8)',
+                [sensor8]
+            );
+            console.log("valores inseridos no banco: ", sensor5 , sensor6 , sensor7, sensor8);
 
         }
 
@@ -154,5 +183,5 @@ const servidor = (
     servidor(
         valoresSensorAnalogico,
         //valoresSensorDigital
-    );  
+    );
 })();
